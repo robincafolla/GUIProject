@@ -12,6 +12,8 @@ public class DB {
 	
 	//connect to DB.
 	
+	
+	
 	public DB() {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
@@ -21,7 +23,7 @@ public class DB {
 		}
 	}
 	
-	//check method with userId and password
+	//methode checking for userId and password
 
 	public Boolean checkLogin(String user, String pswd) {
 		try {
