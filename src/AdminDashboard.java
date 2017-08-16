@@ -52,7 +52,20 @@ public class AdminDashboard extends JPanel {
 	private JLabel C;
 
 	private int lastNoOfStudent;
-
+	
+	
+	public Student setFieldsData (Student s){
+		s.setName(nameField.getText());
+		s.setEmail(emailField.getText());
+		s.setPass(passField.getText());
+		s.setCourse(courseField.getText());
+		s.setTel(telField.getText());
+		s.setType(typeField.getText());
+		return s;
+	}
+	
+	
+  // Constructor
 	public AdminDashboard() {
 
 		frame = new JFrame("** Admin **");
@@ -68,7 +81,9 @@ public class AdminDashboard extends JPanel {
 		frame.setVisible(true);
 
 	}
-
+	
+	
+	// Adding components to Pane..
 	public void addComponentsToPane(Container pane) {
 
 		if (!(pane.getLayout() instanceof BorderLayout)) {
@@ -96,6 +111,7 @@ public class AdminDashboard extends JPanel {
 		});
 		pane.add(button, BorderLayout.PAGE_START);
 
+		
 		// main Jtable - center field for showing result.
 		table = new JTable(tableModel) {
 			public boolean isCellEditable(int row, int column) {
@@ -156,7 +172,7 @@ public class AdminDashboard extends JPanel {
 
 		return panel;
 	}
-
+	
 	// contoroling part - Button input section.
 	private JPanel initButtons() {
 		JPanel panel = new JPanel();
@@ -166,17 +182,25 @@ public class AdminDashboard extends JPanel {
 		createButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				insertUser();
+				// place for methode..
+				Student s = new Student();
+				setFieldsData(s);
+				DB db = new DB();
+				db.insertUser(s);
+				
 				new SwingWorker<Void, Void>() {
 					@Override
 					protected Void doInBackground() throws Exception {
 						loadData();
+						clearFields();
 						return null;
 					}
 				}.execute();
+				
 			}
 		});
 
+	/*
 		panel.add(updateButton);
 		updateButton.addActionListener(new ActionListener() {
 			@Override
@@ -186,6 +210,7 @@ public class AdminDashboard extends JPanel {
 					@Override
 					protected Void doInBackground() throws Exception {
 						loadData();
+						clearFields();
 						return null;
 					}
 				}.execute();
@@ -221,7 +246,7 @@ public class AdminDashboard extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				searchByName();
 			}
-		});
+		});*/
 
 		panel.add(endButton);
 		endButton.addActionListener(new ActionListener() {
@@ -284,217 +309,7 @@ public class AdminDashboard extends JPanel {
 		// LOG.info("END loadData method");
 	}
 	
-	// Method that you can find Last student Number from Mysql...
-	private int findLastNoOfStudent() {
 
-		try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/guiproj", "root", "root")) {
-
-			String sql = "SELECT * FROM guirep ORDER BY id DESC LIMIT 1;";
-			PreparedStatement statement = conn.prepareStatement(sql);
-
-			ResultSet rs = statement.executeQuery();
-			ResultSetMetaData metaData = rs.getMetaData();
-
-			int columnCount = metaData.getColumnCount();
-			Vector<Vector<Object>> data = new Vector<Vector<Object>>();
-			while (rs.next()) {
-				Vector<Object> vector = new Vector<Object>();
-				for (int i = 1; i <= columnCount; i++) {
-					vector.add(rs.getObject(i));
-				}
-				data.add(vector);
-				lastNoOfStudent = rs.getInt(8);
-				//System.out.println(lastNoOfStudent);
-			}
-
-		} catch (Exception e) {
-			System.out.println(e);
-		}
-		return lastNoOfStudent;
-
-	}
-
-	private void insertUser() {
-
-		try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/guiproj", "root", "root")) {
-
-			String sql = "INSERT INTO guirep (name, email, pass, course, tel, type, uniqueNo) VALUES (?, ?, ?, ?, ?, ?, ?)";
-
-			PreparedStatement statement = conn.prepareStatement(sql);
-			statement.setString(1, nameField.getText());
-			statement.setString(2, emailField.getText());
-			statement.setString(3, passField.getText());
-			statement.setString(4, courseField.getText());
-			statement.setString(5, telField.getText());
-			statement.setString(6, typeField.getText());
-			findLastNoOfStudent(); // findlast number of student
-			// set last student no for new user. so that they can get number -  last number +1
-			UniqueIdGenerator.setLastNumberOfStudent(findLastNoOfStudent()); 
-			// set number for new student. 
-			statement.setInt(7, new UniqueIdGenerator().id);
-
-			// statement.setInt(7, new Random().nextInt(Integer.MAX_VALUE) + 1);
-
-			int rowsInserted = statement.executeUpdate();
-			if (rowsInserted > 0) {
-				System.out.println("A new user was inserted successfully!");
-			}
-
-			clearFields();
-
-		} catch (SQLException ex) {
-			ex.printStackTrace();
-		}
-
-	}
-	// updater methode.
-	private void updateUser() {
-
-		try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/guiproj", "root", "root")) {
-
-			String sql = "UPDATE guirep SET name=?, email=?, pass=?, course=?, tel=?, type=? WHERE uniqueNo=?";
-
-			PreparedStatement statement = conn.prepareStatement(sql);
-			statement.setString(1, nameField.getText());
-			statement.setString(2, emailField.getText());
-			statement.setString(3, passField.getText());
-			statement.setString(4, courseField.getText());
-			statement.setString(5, telField.getText());
-			statement.setString(6, typeField.getText());
-			statement.setString(7, uniqueNoField.getText());
-
-			int rowsUpdated = statement.executeUpdate();
-			if (rowsUpdated > 0) {
-				System.out.println("An existing user was updated successfully!");
-			}
-
-			clearFields();
-
-		} catch (SQLException ex) {
-			ex.printStackTrace();
-		}
-
-	}
-	// delete with name - methode..
-	private void deleteUser() {
-
-		try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/guiproj", "root", "root")) {
-
-			String sql = "DELETE FROM guirep WHERE name=?";
-
-			PreparedStatement statement = conn.prepareStatement(sql);
-			statement.setString(1, nameField.getText());
-
-			int rowsDeleted = statement.executeUpdate();
-			if (rowsDeleted > 0) {
-				System.out.println("A user was deleted successfully!");
-			}
-
-			clearFields();
-
-		} catch (SQLException ex) {
-			ex.printStackTrace();
-		}
-
-	}
-	//search by course methode..
-	private void searchByCourse() {
-
-		button.setEnabled(false);
-
-		try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/guiproj", "root", "root")) {
-
-			String sql = "select * from guirep where course=?;";
-			PreparedStatement statement = conn.prepareStatement(sql);
-			statement.setString(1, courseField.getText());
-
-			ResultSet rs = statement.executeQuery();
-			ResultSetMetaData metaData = rs.getMetaData();
-
-			// System.out.println("LoadData works");
-
-			// Names of columns
-			Vector<String> columnNames = new Vector<String>();
-			int columnCount = metaData.getColumnCount();
-			for (int i = 1; i <= columnCount; i++) {
-				columnNames.add(metaData.getColumnName(i));
-			}
-
-			// Data of the table
-			Vector<Vector<Object>> data = new Vector<Vector<Object>>();
-			while (rs.next()) {
-				Vector<Object> vector = new Vector<Object>();
-				for (int i = 1; i <= columnCount; i++) {
-					vector.add(rs.getObject(i));
-				}
-				data.add(vector);
-			}
-
-			tableModel.setDataVector(data, columnNames);
-
-		} catch (Exception e) {
-			System.out.println(e);
-			// LOG.log(Level.SEVERE, "Exception in Load Data", e);
-		}
-
-		button.setEnabled(true);
-		clearFields();
-	}
-	
-	// search by name methode..
-	private void searchByName() {
-
-		button.setEnabled(false);
-		String userEmail = "";
-
-		try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/guiproj", "root", "root")) {
-
-			String sql = "select * from guirep where name=?;";
-			PreparedStatement statement = conn.prepareStatement(sql);
-			statement.setString(1, nameField.getText());
-
-			ResultSet rs = statement.executeQuery();
-			ResultSetMetaData metaData = rs.getMetaData();
-
-			// System.out.println("LoadData works");
-
-			// Names of columns
-			Vector<String> columnNames = new Vector<String>();
-			int columnCount = metaData.getColumnCount();
-			for (int i = 1; i <= columnCount; i++) {
-				columnNames.add(metaData.getColumnName(i));
-			}
-
-			// Data of the table
-			Vector<Vector<Object>> data = new Vector<Vector<Object>>();
-			while (rs.next()) {
-				Vector<Object> vector = new Vector<Object>();
-				for (int i = 1; i <= columnCount; i++) {
-					vector.add(rs.getObject(i));
-					userEmail = rs.getString("email");
-				}
-				data.add(vector);
-			}
-
-			tableModel.setDataVector(data, columnNames);
-			// System.out.println("%%");
-
-			frame.dispose();
-			new StudentDashboard(userEmail);
-			// System.out.println("&&%");
-
-		} catch (Exception e) {
-			System.out.println(e);
-			// LOG.log(Level.SEVERE, "Exception in Load Data", e);
-		}
-
-		button.setEnabled(true);
-
-		clearFields();
-
-	}
-	
-	
 
 	// clearing filed... 
 	private void clearFields() {
@@ -507,20 +322,4 @@ public class AdminDashboard extends JPanel {
 		uniqueNoField.setText(null);
 	}
 
-	/*
-	 * 
-	 * public static void main(String[] args) { /* Use an appropriate Look and
-	 * Feel try { // UIManager.setLookAndFeel(
-	 * "com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-	 * UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel"); }
-	 * catch (UnsupportedLookAndFeelException ex) { ex.printStackTrace(); } catch
-	 * (IllegalAccessException ex) { ex.printStackTrace(); } catch
-	 * (InstantiationException ex) { ex.printStackTrace(); } catch
-	 * (ClassNotFoundException ex) { ex.printStackTrace(); }
-	 * 
-	 * // creating and showing this application's GUI.
-	 * javax.swing.SwingUtilities.invokeLater(new Runnable() { public void run() {
-	 * new AdminDashboard(); } }); }
-	 * 
-	 */
 }

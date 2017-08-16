@@ -46,11 +46,11 @@ public class StudentDashboard extends JFrame {
 
 	public StudentDashboard() {
 	};
-
+	
+	
 	public StudentDashboard(String s) {
 		
 		// Try Catch section - to get uniqueStudentNumber from Database....
-
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/guiproj", "root", "root")) {
 
 			String sql = "select * from guirep where email=?;";
