@@ -5,10 +5,7 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -142,8 +139,7 @@ public class StudentDashboard extends JFrame {
 		JPanel panel = new JPanel();
 		panel.setLayout(new FlowLayout(FlowLayout.CENTER, 3, 3));
 		
-		
-		// 1. Update section
+		// 1. Update Button
 		panel.add(updateButton);
 		updateButton.addActionListener(new ActionListener() {
 			@Override
@@ -166,7 +162,8 @@ public class StudentDashboard extends JFrame {
 				}.execute();
 			}
 		});
-		// 2. Logout
+		
+		// 2. Logout Button
 		panel.add(endButton);
 		endButton.addActionListener(new ActionListener() {
 			@Override
@@ -175,7 +172,8 @@ public class StudentDashboard extends JFrame {
 				new Login();
 			}
 		});
-		// 3. Exit
+		
+		// 3. Exit Button
 		panel.add(exitButton);
 		exitButton.addActionListener(new ActionListener() {
 			@Override
@@ -185,33 +183,6 @@ public class StudentDashboard extends JFrame {
 		});
 
 		return panel;
-	}
-
-	private void updateUser() {
-
-		try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/guiproj", "root", "root")) {
-
-			String sql = "UPDATE guirep SET name=?, email=?, pass=?, course=?, tel=?, type=? WHERE uniqueNo=?";
-
-			PreparedStatement statement = conn.prepareStatement(sql);
-			statement.setString(1, nameField.getText());
-			statement.setString(2, emailField.getText());
-			statement.setString(3, passField.getText());
-			statement.setString(4, courseField.getText());
-			statement.setString(5, telField.getText());
-			statement.setString(6, typeField.getText());
-			statement.setString(7, uniqueNoField.getText());
-
-			int rowsUpdated = statement.executeUpdate();
-			if (rowsUpdated > 0) {
-				System.out.println("An existing user was updated successfully!");
-			}
-
-			clearFields();
-
-		} catch (SQLException ex) {
-			ex.printStackTrace();
-		}
 	}
 
 	private void clearFields() {

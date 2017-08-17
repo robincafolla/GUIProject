@@ -85,7 +85,9 @@ public class AdminDashboard extends JPanel {
 				new SwingWorker<Void, Void>() {
 					@Override
 					protected Void doInBackground() throws Exception {
+						button.setEnabled(false);
 						db.loadData(tableModel);
+						button.setEnabled(true);
 						return null;
 					}
 				}.execute();
@@ -94,13 +96,13 @@ public class AdminDashboard extends JPanel {
 		pane.add(button, BorderLayout.PAGE_START);
 
 		// main Jtable - center field for showing result.
-		button.setEnabled(false);
+		
 		table = new JTable(tableModel) {
 			public boolean isCellEditable(int row, int column) {
 				return false;
 			}
 		};
-		button.setEnabled(true);
+		
 		pane.add(new JScrollPane(table), BorderLayout.CENTER);
 
 		// bottom input part for controling database.
