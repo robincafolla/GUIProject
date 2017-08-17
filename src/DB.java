@@ -35,8 +35,7 @@ public class DB {
 			pst.setString(2, pswd);
 
 			rs = pst.executeQuery();
-			if (rs.next()) {
-				// TRUE if the query founds any corresponding data
+			if (rs.next()) { // TRUE if the query founds any corresponding data
 				return true;
 			} else {
 				return false;
