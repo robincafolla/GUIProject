@@ -26,7 +26,7 @@ public class Login extends JFrame implements ActionListener {
 
 	public Login() {
 		// to connect mysql..
-		
+
 		db = new DB();
 		login = new JFrame("## Please Log In... ##");
 
@@ -38,7 +38,6 @@ public class Login extends JFrame implements ActionListener {
 
 		GridBagConstraints c = new GridBagConstraints(); // Create GridLayout in
 
-		
 		// components..
 		JLabel userId, pass;
 		userId = new JLabel("USER ID - it's your email.", SwingConstants.CENTER);
@@ -72,9 +71,11 @@ public class Login extends JFrame implements ActionListener {
 		c.gridx = 1;
 		c.gridy = 1;
 		p.add(psField, c);
-		
+
 		JLabel comment;
-		comment = new JLabel("<html><font face='Consolas'><font size=3>Sample login<br><br>admin@gmail.com / 1234 <br>student@gmail.com / 1234 </font></html>", SwingConstants.CENTER);
+		comment = new JLabel(
+				"<html><font face='Consolas'><font size=3>Sample login<br><br>admin@gmail.com / 1234 <br>student@gmail.com / 1234 </font></html>",
+				SwingConstants.CENTER);
 		comment.setFont(null);
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weightx = 1;
@@ -97,7 +98,6 @@ public class Login extends JFrame implements ActionListener {
 		login.setVisible(true);
 	}
 
-	
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 
@@ -106,17 +106,17 @@ public class Login extends JFrame implements ActionListener {
 			char[] temp_pwd = psField.getPassword();
 			String pwd = null;
 			pwd = String.copyValueOf(temp_pwd);
-			//System.out.println("Username,Pwd:" + idField.getText() + "," + pwd);
-			
-			// The entered username and password are sent via "checkLogin()" which return boolean, then "checkType()"
+			// System.out.println("Username,Pwd:" + idField.getText() + "," + pwd);
+
+			// The entered username and password are sent via "checkLogin()" which
+			// return boolean, then "checkType()"
 			if (db.checkLogin(idField.getText(), pwd)) {
 				if (db.checkType(idField.getText()).equals("A")) {
 					JOptionPane.showMessageDialog(null, "## Welcome, You will be brought to Admin Dashboard ##", "Success",
 							JOptionPane.INFORMATION_MESSAGE);
 					login.dispose();
 					new AdminDashboard();
-					
-					
+
 				} else if (db.checkType(idField.getText()).equals("S")) {
 					JOptionPane.showMessageDialog(null, "## Hello, You will be brought to Student Dashboard ##", "Success",
 							JOptionPane.INFORMATION_MESSAGE);
@@ -124,7 +124,6 @@ public class Login extends JFrame implements ActionListener {
 					new StudentDashboard(idField.getText());
 				}
 
-				
 			} else {
 				// a pop-up box
 				JOptionPane.showMessageDialog(null, "Login failed!", "Failed!!", JOptionPane.ERROR_MESSAGE);
@@ -132,7 +131,6 @@ public class Login extends JFrame implements ActionListener {
 		}
 	}
 
-	
 	public static void main(String[] arsg) {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override

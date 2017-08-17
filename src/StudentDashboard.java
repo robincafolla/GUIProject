@@ -44,41 +44,25 @@ public class StudentDashboard extends JFrame {
 	private String unique;
 	private Component C;
 
+	public Student setFieldsData(Student s) {
+		s.setName(nameField.getText());
+		s.setEmail(emailField.getText());
+		s.setPass(passField.getText());
+		s.setCourse(courseField.getText());
+		s.setTel(telField.getText());
+		s.setType(typeField.getText());
+		return s;
+	}
+
 	public StudentDashboard() {
 	};
 
-	public StudentDashboard(String s) {
-
-		// Try Catch section - to get uniqueStudentNumber from Database....
-		try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/guiproj", "root", "root")) {
-
-			String sql = "select * from guirep where email=?;";
-			PreparedStatement statement = conn.prepareStatement(sql);
-			statement.setString(1, s);
-
-			ResultSet rs = statement.executeQuery();
-			ResultSetMetaData metaData = rs.getMetaData();
-
-			int columnCount = metaData.getColumnCount();
-			// Data of the table
-			Vector<Vector<Object>> data = new Vector<Vector<Object>>();
-			while (rs.next()) {
-				Vector<Object> vector = new Vector<Object>();
-				for (int i = 1; i <= columnCount; i++) {
-					vector.add(rs.getObject(i));
-				}
-				data.add(vector);
-				// store as string.
-				unique = rs.getString(8);
-				System.out.println(unique);
-			}
-
-		} catch (Exception e) {
-			System.out.println(e);
-		}
+	public StudentDashboard(String email) {
+		// to get uniqueStudentNumber from Database....
+		DB db = new DB();
+		unique = db.returnUniqueId(email);
 
 		// Main GUI section...
-
 		frame = new JFrame("** Student **");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		Container c = frame.getContentPane();
@@ -95,24 +79,22 @@ public class StudentDashboard extends JFrame {
 	// adding components..
 	private void addComponentsToPane(Container c, String unique) {
 
-		/*
-		 * button = new JButton("click"); c.add(button, BorderLayout.PAGE_START);
-		 */
-
 		new SwingWorker<Void, Void>() {
 			@Override
 			protected Void doInBackground() throws Exception {
-				loadDataWithUniqueNo(unique);
+				DB db = new DB();
+				db.searchByUnique(unique, tableModel);
 				return null;
 			}
 		}.execute();
+
 		table = new JTable(tableModel) {
 			public boolean isCellEditable(int row, int column) {
 				return false;
 			}
 		};
-		c.add(new JScrollPane(table));
 
+		c.add(new JScrollPane(table));
 		bottom.add(initFields(), BorderLayout.PAGE_START);
 		C = new JLabel("** In case you edit your status, you are required to put correct your Student No. **",
 				JLabel.CENTER);
@@ -128,10 +110,7 @@ public class StudentDashboard extends JFrame {
 		JPanel panel = new JPanel();
 
 		panel.setLayout(new MigLayout());
-		/*
-		 * panel.add(new JLabel("ID"), "align label"); panel.add(idField, "wrap");
-		 * idField.setEnabled(true);
-		 */
+
 		panel.add(new JLabel("Name"), "align label");
 		panel.add(nameField, "wrap");
 		nameField.setEnabled(true);
@@ -172,11 +151,19 @@ public class StudentDashboard extends JFrame {
 		updateButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				updateUser();
+				// methodes...
+				Student s = new Student();
+				setFieldsData(s);
+				s.setUniqueId(Integer.parseInt(uniqueNoField.getText()));
+
+				DB db = new DB();
+				db.updateUser(s);
+
 				new SwingWorker<Void, Void>() {
 					@Override
 					protected Void doInBackground() throws Exception {
-						loadDataWithUniqueNo(unique);
+						db.loadData(tableModel);
+						clearFields();
 						return null;
 					}
 				}.execute();
@@ -228,50 +215,6 @@ public class StudentDashboard extends JFrame {
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		}
-
-	}
-
-	// load info wirh student no.
-
-	private void loadDataWithUniqueNo(String unique) {
-
-		// button.setEnabled(false);
-
-		try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/guiproj", "root", "root")) {
-
-			String sql = "select * from guirep where uniqueNo=?;";
-			PreparedStatement statement = conn.prepareStatement(sql);
-			statement.setString(1, unique);
-
-			ResultSet rs = statement.executeQuery();
-			ResultSetMetaData metaData = rs.getMetaData();
-
-			// System.out.println("LoadData works");
-
-			// Names of columns
-			Vector<String> columnNames = new Vector<String>();
-			int columnCount = metaData.getColumnCount();
-			for (int i = 1; i <= columnCount; i++) {
-				columnNames.add(metaData.getColumnName(i));
-			}
-
-			// Data of the table
-			Vector<Vector<Object>> data = new Vector<Vector<Object>>();
-			while (rs.next()) {
-				Vector<Object> vector = new Vector<Object>();
-				for (int i = 1; i <= columnCount; i++) {
-					vector.add(rs.getObject(i));
-				}
-				data.add(vector);
-			}
-
-			tableModel.setDataVector(data, columnNames);
-
-		} catch (Exception e) {
-			System.out.println(e);
-		}
-
-
 	}
 
 	private void clearFields() {

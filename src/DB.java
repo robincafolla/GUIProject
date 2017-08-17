@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Vector;
 
 import javax.swing.table.DefaultTableModel;
@@ -237,4 +238,112 @@ public class DB {
 		}
 		return userEmail;
 	}
+
+	public String returnUniqueId(String email) {
+
+		String uniqueId = "";
+
+		try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/guiproj", "root", "root")) {
+
+			String sql = "select * from guirep where email=?;";
+			PreparedStatement statement = conn.prepareStatement(sql);
+			statement.setString(1, email);
+
+			ResultSet rs = statement.executeQuery();
+			ResultSetMetaData metaData = rs.getMetaData();
+
+			// Names of columns
+			Vector<String> columnNames = new Vector<String>();
+			int columnCount = metaData.getColumnCount();
+			for (int i = 1; i <= columnCount; i++) {
+				columnNames.add(metaData.getColumnName(i));
+			}
+
+			// Data of the table
+			Vector<Vector<Object>> data = new Vector<Vector<Object>>();
+			while (rs.next()) {
+				Vector<Object> vector = new Vector<Object>();
+				for (int i = 1; i <= columnCount; i++) {
+					vector.add(rs.getObject(i));
+					uniqueId = rs.getString("uniqueNo");
+				}
+				data.add(vector);
+			}
+
+		} catch (Exception e) {
+			System.out.println(e);
+			// LOG.log(Level.SEVERE, "Exception in Load Data", e);
+		}
+
+		return uniqueId;
+
+	}
+
+	public void loadData(DefaultTableModel tableModel) {
+
+		try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/guiproj", "root", "root");
+				Statement stmt = conn.createStatement()) {
+
+			ResultSet rs = stmt.executeQuery("select * from guirep;");
+			ResultSetMetaData metaData = rs.getMetaData();
+
+			// Names of columns
+			Vector<String> columnNames = new Vector<String>();
+			int columnCount = metaData.getColumnCount();
+			for (int i = 1; i <= columnCount; i++) {
+				columnNames.add(metaData.getColumnName(i));
+			}
+
+			// Data of the table
+			Vector<Vector<Object>> data = new Vector<Vector<Object>>();
+			while (rs.next()) {
+				Vector<Object> vector = new Vector<Object>();
+				for (int i = 1; i <= columnCount; i++) {
+					vector.add(rs.getObject(i));
+				}
+				data.add(vector);
+			}
+
+			tableModel.setDataVector(data, columnNames);
+
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+	}
+
+	public void searchByUnique(String unique, DefaultTableModel tableModel) {
+
+		try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/guiproj", "root", "root")) {
+
+			String sql = "select * from guirep where uniqueNo=?;";
+			PreparedStatement statement = conn.prepareStatement(sql);
+			statement.setString(1, unique);
+
+			ResultSet rs = statement.executeQuery();
+			ResultSetMetaData metaData = rs.getMetaData();
+
+			// Names of columns
+			Vector<String> columnNames = new Vector<String>();
+			int columnCount = metaData.getColumnCount();
+			for (int i = 1; i <= columnCount; i++) {
+				columnNames.add(metaData.getColumnName(i));
+			}
+
+			// Data of the table
+			Vector<Vector<Object>> data = new Vector<Vector<Object>>();
+			while (rs.next()) {
+				Vector<Object> vector = new Vector<Object>();
+				for (int i = 1; i <= columnCount; i++) {
+					vector.add(rs.getObject(i));
+				}
+				data.add(vector);
+			}
+
+			tableModel.setDataVector(data, columnNames);
+
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+	}
+
 }

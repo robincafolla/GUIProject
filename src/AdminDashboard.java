@@ -1,20 +1,12 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-
 import net.miginfocom.swing.MigLayout;
-
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.Statement;
-import java.util.Vector;
 
 public class AdminDashboard extends JPanel {
 
@@ -23,7 +15,8 @@ public class AdminDashboard extends JPanel {
 
 	JButton button = new JButton();
 	JTable table;
-	
+	DB db = new DB();
+
 	JPanel bottom = new JPanel(new BorderLayout());
 
 	private JTextField nameField = new JTextField(30);
@@ -92,7 +85,7 @@ public class AdminDashboard extends JPanel {
 				new SwingWorker<Void, Void>() {
 					@Override
 					protected Void doInBackground() throws Exception {
-						loadData();
+						db.loadData(tableModel);
 						return null;
 					}
 				}.execute();
@@ -101,11 +94,13 @@ public class AdminDashboard extends JPanel {
 		pane.add(button, BorderLayout.PAGE_START);
 
 		// main Jtable - center field for showing result.
+		button.setEnabled(false);
 		table = new JTable(tableModel) {
 			public boolean isCellEditable(int row, int column) {
 				return false;
 			}
 		};
+		button.setEnabled(true);
 		pane.add(new JScrollPane(table), BorderLayout.CENTER);
 
 		// bottom input part for controling database.
@@ -177,7 +172,7 @@ public class AdminDashboard extends JPanel {
 				new SwingWorker<Void, Void>() {
 					@Override
 					protected Void doInBackground() throws Exception {
-						loadData();
+						db.loadData(tableModel);
 						clearFields();
 						return null;
 					}
@@ -201,7 +196,7 @@ public class AdminDashboard extends JPanel {
 				new SwingWorker<Void, Void>() {
 					@Override
 					protected Void doInBackground() throws Exception {
-						loadData();
+						db.loadData(tableModel);
 						clearFields();
 						return null;
 					}
@@ -224,7 +219,9 @@ public class AdminDashboard extends JPanel {
 				new SwingWorker<Void, Void>() {
 					@Override
 					protected Void doInBackground() throws Exception {
-						loadData();
+						button.setEnabled(false);
+						db.loadData(tableModel);
+						button.setEnabled(true);
 						clearFields();
 						return null;
 					}
@@ -275,45 +272,6 @@ public class AdminDashboard extends JPanel {
 		});
 
 		return panel;
-	}
-
-	// load every data from Mysql...
-	private void loadData() {
-
-		button.setEnabled(false);
-
-		try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/guiproj", "root", "root");
-				Statement stmt = conn.createStatement()) {
-
-			ResultSet rs = stmt.executeQuery("select * from guirep;");
-			ResultSetMetaData metaData = rs.getMetaData();
-
-			// System.out.println("LoadData works");
-
-			// Names of columns
-			Vector<String> columnNames = new Vector<String>();
-			int columnCount = metaData.getColumnCount();
-			for (int i = 1; i <= columnCount; i++) {
-				columnNames.add(metaData.getColumnName(i));
-			}
-
-			// Data of the table
-			Vector<Vector<Object>> data = new Vector<Vector<Object>>();
-			while (rs.next()) {
-				Vector<Object> vector = new Vector<Object>();
-				for (int i = 1; i <= columnCount; i++) {
-					vector.add(rs.getObject(i));
-				}
-				data.add(vector);
-			}
-
-			tableModel.setDataVector(data, columnNames);
-
-		} catch (Exception e) {
-			System.out.println(e);
-		}
-
-		button.setEnabled(true);
 	}
 
 	// clearing filed...
