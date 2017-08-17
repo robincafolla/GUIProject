@@ -10,7 +10,7 @@ import java.awt.event.WindowEvent;
 
 public class AdminDashboard extends JPanel {
 
-	private DefaultTableModel tableModel = new DefaultTableModel();
+	private final DefaultTableModel tableModel = new DefaultTableModel(); // Don't know why it has to be Final??? 
 	public static boolean RIGHT_TO_LEFT = false;
 
 	JButton button = new JButton();
@@ -96,7 +96,6 @@ public class AdminDashboard extends JPanel {
 		pane.add(button, BorderLayout.PAGE_START);
 
 		// main Jtable - center field for showing result.
-		
 		table = new JTable(tableModel) {
 			public boolean isCellEditable(int row, int column) {
 				return false;
