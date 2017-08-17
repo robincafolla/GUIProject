@@ -15,7 +15,6 @@ public class DB {
 	ResultSet rs;
 
 	private int lastNoOfStudent;
-	private final DefaultTableModel tb = new DefaultTableModel();
 
 	// connect to DB.
 	public DB() {
@@ -119,7 +118,6 @@ public class DB {
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		}
-
 	}
 
 	public void updateUser(Student s) {
@@ -140,7 +138,6 @@ public class DB {
 			if (rowsUpdated > 0) {
 				System.out.println("An existing user was updated successfully!");
 			}
-
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		}
@@ -164,11 +161,10 @@ public class DB {
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		}
-
 	}
 
 	// search by course methode..
-	public DefaultTableModel searchByCourse(String course) {
+	public void searchByCourse(String course, DefaultTableModel tableModel) {
 
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/guiproj", "root", "root")) {
 
@@ -178,8 +174,6 @@ public class DB {
 
 			ResultSet rs = statement.executeQuery();
 			ResultSetMetaData metaData = rs.getMetaData();
-
-			// System.out.println("LoadData works");
 
 			// Names of columns
 			Vector<String> columnNames = new Vector<String>();
@@ -198,19 +192,15 @@ public class DB {
 				data.add(vector);
 			}
 
-			tb.setDataVector(data, columnNames);
-			
+			tableModel.setDataVector(data, columnNames);
 
 		} catch (Exception e) {
 			System.out.println(e);
-			// LOG.log(Level.SEVERE, "Exception in Load Data", e);
 		}
-		return tb;
-		
 	}
 
 	// search by name methode..
-	public DefaultTableModel searchByName(String name) {
+	public String searchByName(String name) {
 
 		String userEmail = "";
 
@@ -222,8 +212,6 @@ public class DB {
 
 			ResultSet rs = statement.executeQuery();
 			ResultSetMetaData metaData = rs.getMetaData();
-
-			// System.out.println("LoadData works");
 
 			// Names of columns
 			Vector<String> columnNames = new Vector<String>();
@@ -243,23 +231,10 @@ public class DB {
 				data.add(vector);
 			}
 
-			tb.setDataVector(data, columnNames);
-			// System.out.println("%%");
-
-			// methode has to be addded later ########
-
-			// frame.dispose();
-			// new StudentDashboard(userEmail);
-
-			// System.out.println("&&%");
-
 		} catch (Exception e) {
 			System.out.println(e);
 			// LOG.log(Level.SEVERE, "Exception in Load Data", e);
 		}
-		
-		return tb;
-
+		return userEmail;
 	}
-
 }

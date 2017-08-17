@@ -46,10 +46,9 @@ public class StudentDashboard extends JFrame {
 
 	public StudentDashboard() {
 	};
-	
-	
+
 	public StudentDashboard(String s) {
-		
+
 		// Try Catch section - to get uniqueStudentNumber from Database....
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/guiproj", "root", "root")) {
 
@@ -69,7 +68,7 @@ public class StudentDashboard extends JFrame {
 					vector.add(rs.getObject(i));
 				}
 				data.add(vector);
-				// store as string. 
+				// store as string.
 				unique = rs.getString(8);
 				System.out.println(unique);
 			}
@@ -77,9 +76,8 @@ public class StudentDashboard extends JFrame {
 		} catch (Exception e) {
 			System.out.println(e);
 		}
-		
+
 		// Main GUI section...
-		
 
 		frame = new JFrame("** Student **");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -94,8 +92,7 @@ public class StudentDashboard extends JFrame {
 		frame.setVisible(true);
 	}
 
-	
-	// adding components.. 
+	// adding components..
 	private void addComponentsToPane(Container c, String unique) {
 
 		/*
@@ -116,8 +113,6 @@ public class StudentDashboard extends JFrame {
 		};
 		c.add(new JScrollPane(table));
 
-		
-		
 		bottom.add(initFields(), BorderLayout.PAGE_START);
 		C = new JLabel("** In case you edit your status, you are required to put correct your Student No. **",
 				JLabel.CENTER);
@@ -127,8 +122,8 @@ public class StudentDashboard extends JFrame {
 		c.add(bottom, BorderLayout.PAGE_END);
 
 	}
-	
-	// controlling part - filed section. 
+
+	// controlling part - filed section.
 	private JPanel initFields() {
 		JPanel panel = new JPanel();
 
@@ -236,8 +231,8 @@ public class StudentDashboard extends JFrame {
 
 	}
 
-	// load info wirh student no. 
-	
+	// load info wirh student no.
+
 	private void loadDataWithUniqueNo(String unique) {
 
 		// button.setEnabled(false);
@@ -276,7 +271,6 @@ public class StudentDashboard extends JFrame {
 			System.out.println(e);
 		}
 
-		// button.setEnabled(true);
 
 	}
 
@@ -289,12 +283,5 @@ public class StudentDashboard extends JFrame {
 		typeField.setText(null);
 		uniqueNoField.setText(null);
 	}
-
-	// public static void main(String[] args) {
-	/*
-	 * javax.swing.SwingUtilities.invokeLater(new Runnable() { public void run() {
-	 * new StudentDashboard(); } });
-	 */
-	// }
 
 }

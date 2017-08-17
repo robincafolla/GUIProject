@@ -4,34 +4,28 @@ import javax.swing.table.DefaultTableModel;
 import net.miginfocom.swing.MigLayout;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Random;
 import java.util.Vector;
 
 public class AdminDashboard extends JPanel {
 
-	private final DefaultTableModel tableModel = new DefaultTableModel();
+	private DefaultTableModel tableModel = new DefaultTableModel();
 	public static boolean RIGHT_TO_LEFT = false;
 
 	JButton button = new JButton();
 	JTable table;
-
+	
 	JPanel bottom = new JPanel(new BorderLayout());
 
-	// private JTextField idField = new JTextField(10);
 	private JTextField nameField = new JTextField(30);
 	private JTextField emailField = new JTextField(30);
 	private JTextField passField = new JTextField(30);
@@ -51,10 +45,7 @@ public class AdminDashboard extends JPanel {
 	private JButton exitButton = new JButton("EXIT");
 	private JLabel C;
 
-	private int lastNoOfStudent;
-	
-	
-	public Student setFieldsData (Student s){
+	public Student setFieldsData(Student s) {
 		s.setName(nameField.getText());
 		s.setEmail(emailField.getText());
 		s.setPass(passField.getText());
@@ -63,9 +54,8 @@ public class AdminDashboard extends JPanel {
 		s.setType(typeField.getText());
 		return s;
 	}
-	
-	
-  // Constructor
+
+	// Constructor
 	public AdminDashboard() {
 
 		frame = new JFrame("** Admin **");
@@ -74,15 +64,14 @@ public class AdminDashboard extends JPanel {
 		addComponentsToPane(c);
 
 		frame.pack();
-		// setSize and setLocation has to be after pack()
+		// setSize() and setLocation() has to be after pack() to show every elements
+		// at the first time.
 		frame.setSize(1024, 640);
 		frame.setLocationRelativeTo(null);
 
 		frame.setVisible(true);
-
 	}
-	
-	
+
 	// Adding components to Pane..
 	public void addComponentsToPane(Container pane) {
 
@@ -111,7 +100,6 @@ public class AdminDashboard extends JPanel {
 		});
 		pane.add(button, BorderLayout.PAGE_START);
 
-		
 		// main Jtable - center field for showing result.
 		table = new JTable(tableModel) {
 			public boolean isCellEditable(int row, int column) {
@@ -138,10 +126,7 @@ public class AdminDashboard extends JPanel {
 		JPanel panel = new JPanel();
 
 		panel.setLayout(new MigLayout());
-		/*
-		 * panel.add(new JLabel("ID"), "align label"); panel.add(idField, "wrap");
-		 * idField.setEnabled(true);
-		 */
+
 		panel.add(new JLabel("Name"), "align label");
 		panel.add(nameField, "wrap");
 		nameField.setEnabled(true);
@@ -172,12 +157,13 @@ public class AdminDashboard extends JPanel {
 
 		return panel;
 	}
-	
+
 	// contoroling part - Button input section.
 	private JPanel initButtons() {
 		JPanel panel = new JPanel();
 		panel.setLayout(new FlowLayout(FlowLayout.CENTER, 3, 3));
 
+		// 1. Create Button.
 		panel.add(createButton);
 		createButton.addActionListener(new ActionListener() {
 			@Override
@@ -187,7 +173,7 @@ public class AdminDashboard extends JPanel {
 				setFieldsData(s);
 				DB db = new DB();
 				db.insertUser(s);
-				
+
 				new SwingWorker<Void, Void>() {
 					@Override
 					protected Void doInBackground() throws Exception {
@@ -196,16 +182,22 @@ public class AdminDashboard extends JPanel {
 						return null;
 					}
 				}.execute();
-				
 			}
 		});
 
-	/*
+		// 2 Update Button.
 		panel.add(updateButton);
 		updateButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				updateUser();
+				// methodes...
+				Student s = new Student();
+				setFieldsData(s);
+				s.setUniqueId(Integer.parseInt(uniqueNoField.getText()));
+
+				DB db = new DB();
+				db.updateUser(s);
+
 				new SwingWorker<Void, Void>() {
 					@Override
 					protected Void doInBackground() throws Exception {
@@ -217,37 +209,53 @@ public class AdminDashboard extends JPanel {
 			}
 		});
 
+		// 3.Delete Button.
 		panel.add(deleteButton);
 		deleteButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				deleteUser();
+
+				// Methode for deleting..
+				Student s = new Student();
+				setFieldsData(s);
+				DB db = new DB();
+				db.deleteUser(s);
+
 				new SwingWorker<Void, Void>() {
 					@Override
 					protected Void doInBackground() throws Exception {
 						loadData();
+						clearFields();
 						return null;
 					}
 				}.execute();
 			}
 		});
 
+		// 4.Course Search Button.
 		panel.add(searchButton);
 		searchButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				searchByCourse();
+				DB db = new DB();
+				db.searchByCourse(courseField.getText(), tableModel);
+
 			}
 		});
 
+		// 5.Name Search Button.
 		panel.add(nameSearchButton);
 		nameSearchButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				searchByName();
+				// searchByName
+				DB db = new DB();
+				frame.dispose();
+				new StudentDashboard(db.searchByName(nameField.getText()));
 			}
-		});*/
+		});
 
+		// 6.Log out
 		panel.add(endButton);
 		endButton.addActionListener(new ActionListener() {
 			@Override
@@ -257,6 +265,7 @@ public class AdminDashboard extends JPanel {
 			}
 		});
 
+		// 7.exit
 		panel.add(exitButton);
 		exitButton.addActionListener(new ActionListener() {
 			@Override
@@ -267,6 +276,7 @@ public class AdminDashboard extends JPanel {
 
 		return panel;
 	}
+
 	// load every data from Mysql...
 	private void loadData() {
 
@@ -301,17 +311,12 @@ public class AdminDashboard extends JPanel {
 
 		} catch (Exception e) {
 			System.out.println(e);
-			// LOG.log(Level.SEVERE, "Exception in Load Data", e);
 		}
 
 		button.setEnabled(true);
-
-		// LOG.info("END loadData method");
 	}
-	
 
-
-	// clearing filed... 
+	// clearing filed...
 	private void clearFields() {
 		nameField.setText(null);
 		emailField.setText(null);
