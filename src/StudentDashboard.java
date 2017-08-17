@@ -20,7 +20,6 @@ import javax.swing.table.TableModel;
 
 import net.miginfocom.swing.MigLayout;
 
-
 public class StudentDashboard extends JFrame {
 
 	private JButton button;
@@ -45,7 +44,7 @@ public class StudentDashboard extends JFrame {
 	private String unique;
 	private Component C;
 
-	public Student setFieldsData(Student s) {
+	public User setFieldsData(User s) {
 		s.setName(nameField.getText());
 		s.setEmail(emailField.getText());
 		s.setPass(passField.getText());
@@ -147,13 +146,15 @@ public class StudentDashboard extends JFrame {
 	private JPanel initButtons() {
 		JPanel panel = new JPanel();
 		panel.setLayout(new FlowLayout(FlowLayout.CENTER, 3, 3));
-
+		
+		
+		// 1. Update section
 		panel.add(updateButton);
 		updateButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// methodes...
-				Student s = new Student();
+				User s = new User();
 				setFieldsData(s);
 				s.setUniqueId(Integer.parseInt(uniqueNoField.getText()));
 
@@ -170,7 +171,7 @@ public class StudentDashboard extends JFrame {
 				}.execute();
 			}
 		});
-
+		// 2. Logout
 		panel.add(endButton);
 		endButton.addActionListener(new ActionListener() {
 			@Override
@@ -179,7 +180,7 @@ public class StudentDashboard extends JFrame {
 				new Login();
 			}
 		});
-
+		// 3. Exit
 		panel.add(exitButton);
 		exitButton.addActionListener(new ActionListener() {
 			@Override

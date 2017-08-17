@@ -9,7 +9,6 @@ import java.util.Vector;
 
 import javax.swing.table.DefaultTableModel;
 
-
 public class DB {
 
 	Connection con;
@@ -92,7 +91,7 @@ public class DB {
 		return lastNoOfStudent;
 	}
 
-	public void insertUser(Student s) {
+	public void insertUser(User s) {
 
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/guiproj", "root", "root")) {
 
@@ -122,7 +121,7 @@ public class DB {
 		}
 	}
 
-	public void updateUser(Student s) {
+	public void updateUser(User s) {
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/guiproj", "root", "root")) {
 
 			String sql = "UPDATE guirep SET name=?, email=?, pass=?, course=?, tel=?, type=? WHERE uniqueNo=?";
@@ -146,7 +145,7 @@ public class DB {
 	}
 
 	// delete with name - methode..
-	public void deleteUser(Student s) {
+	public void deleteUser(User s) {
 
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/guiproj", "root", "root")) {
 

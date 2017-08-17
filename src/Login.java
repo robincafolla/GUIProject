@@ -16,7 +16,6 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
-
 public class Login extends JFrame implements ActionListener {
 
 	private JPasswordField psField;

@@ -8,7 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 
-
 public class AdminDashboard extends JPanel {
 
 	private DefaultTableModel tableModel = new DefaultTableModel();
@@ -39,7 +38,7 @@ public class AdminDashboard extends JPanel {
 	private JButton exitButton = new JButton("EXIT");
 	private JLabel C;
 
-	public Student setFieldsData(Student s) {
+	public User setFieldsData(User s) {
 		s.setName(nameField.getText());
 		s.setEmail(emailField.getText());
 		s.setPass(passField.getText());
@@ -165,7 +164,7 @@ public class AdminDashboard extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// place for methode..
-				Student s = new Student();
+				User s = new User();
 				setFieldsData(s);
 				DB db = new DB();
 				db.insertUser(s);
@@ -187,7 +186,7 @@ public class AdminDashboard extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// methodes...
-				Student s = new Student();
+				User s = new User();
 				setFieldsData(s);
 				s.setUniqueId(Integer.parseInt(uniqueNoField.getText()));
 
@@ -212,7 +211,7 @@ public class AdminDashboard extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 
 				// Methode for deleting..
-				Student s = new Student();
+				User s = new User();
 				setFieldsData(s);
 				DB db = new DB();
 				db.deleteUser(s);
