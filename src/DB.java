@@ -87,7 +87,7 @@ public class DB {
 
 	public void insertUser(User s) {
 		String sql = "INSERT INTO guirep (name, email, pass, course, tel, type, uniqueNo) VALUES (?, ?, ?, ?, ?, ?, ?)";
-		try (PreparedStatement pst = con.prepareStatement(sql);) {
+		try (PreparedStatement pst = con.prepareStatement(sql)) {
 			pst.setString(1, s.getName());
 			pst.setString(2, s.getEmail());
 			pst.setString(3, s.getPass());
@@ -134,7 +134,7 @@ public class DB {
 	// delete with name - methode..
 	public void deleteUser(User s) {
 		String sql = "DELETE FROM guirep WHERE name=?";
-		try (PreparedStatement statement = con.prepareStatement(sql);) {
+		try (PreparedStatement statement = con.prepareStatement(sql)) {
 			statement.setString(1, s.getName());
 
 			int rowsDeleted = statement.executeUpdate();
@@ -150,7 +150,7 @@ public class DB {
 	// search by course methode..
 	public void searchByCourse(String course, DefaultTableModel tableModel) {
 		String sql = "select * from guirep where course=?;";
-		try (PreparedStatement statement = con.prepareStatement(sql);) {
+		try (PreparedStatement statement = con.prepareStatement(sql)) {
 			statement.setString(1, course);
 
 			ResultSet rs = statement.executeQuery();
@@ -220,7 +220,7 @@ public class DB {
 		String uniqueId = "";
 		String sql = "select * from guirep where email=?;";
 
-		try (PreparedStatement statement = con.prepareStatement(sql);) {
+		try (PreparedStatement statement = con.prepareStatement(sql)) {
 			statement.setString(1, email);
 
 			ResultSet rs = statement.executeQuery();
