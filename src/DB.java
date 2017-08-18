@@ -64,12 +64,9 @@ public class DB {
 	}
 
 	public int findLastNoOfStudent() {
-		try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/guiproj", "root", "root")) {
-
-			String sql = "SELECT * FROM guirep ORDER BY id DESC LIMIT 1;";
-			PreparedStatement statement = conn.prepareStatement(sql);
-
-			ResultSet rs = statement.executeQuery();
+		try {
+			PreparedStatement pst = con.prepareStatement("SELECT * FROM guirep ORDER BY id DESC LIMIT 1;");
+			ResultSet rs = pst.executeQuery();
 			ResultSetMetaData metaData = rs.getMetaData();
 
 			int columnCount = metaData.getColumnCount();
@@ -92,25 +89,24 @@ public class DB {
 
 	public void insertUser(User s) {
 
-		try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/guiproj", "root", "root")) {
-
+		try {
 			String sql = "INSERT INTO guirep (name, email, pass, course, tel, type, uniqueNo) VALUES (?, ?, ?, ?, ?, ?, ?)";
-			PreparedStatement statement = conn.prepareStatement(sql);
+			PreparedStatement pst = con.prepareStatement(sql);
 
-			statement.setString(1, s.getName());
-			statement.setString(2, s.getEmail());
-			statement.setString(3, s.getPass());
-			statement.setString(4, s.getCourse());
-			statement.setString(5, s.getTel());
-			statement.setString(6, s.getType());
+			pst.setString(1, s.getName());
+			pst.setString(2, s.getEmail());
+			pst.setString(3, s.getPass());
+			pst.setString(4, s.getCourse());
+			pst.setString(5, s.getTel());
+			pst.setString(6, s.getType());
 
 			// findlast number of student then, set last student no for new user. so
 			// that they can get number - last number +1
 			UniqueIdGenerator.setLastNumberOfStudent(findLastNoOfStudent());
 			// set number for new student.
-			statement.setInt(7, new UniqueIdGenerator().id);
+			pst.setInt(7, new UniqueIdGenerator().id);
 
-			int rowsInserted = statement.executeUpdate();
+			int rowsInserted = pst.executeUpdate();
 			if (rowsInserted > 0) {
 				System.out.println("A new user was inserted successfully!");
 			}
@@ -121,11 +117,10 @@ public class DB {
 	}
 
 	public void updateUser(User s) {
-		try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/guiproj", "root", "root")) {
-
+		try {
 			String sql = "UPDATE guirep SET name=?, email=?, pass=?, course=?, tel=?, type=? WHERE uniqueNo=?";
 
-			PreparedStatement statement = conn.prepareStatement(sql);
+			PreparedStatement statement = con.prepareStatement(sql);
 			statement.setString(1, s.getName());
 			statement.setString(2, s.getEmail());
 			statement.setString(3, s.getPass());
@@ -146,11 +141,10 @@ public class DB {
 	// delete with name - methode..
 	public void deleteUser(User s) {
 
-		try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/guiproj", "root", "root")) {
-
+		try {
 			String sql = "DELETE FROM guirep WHERE name=?";
 
-			PreparedStatement statement = conn.prepareStatement(sql);
+			PreparedStatement statement = con.prepareStatement(sql);
 			statement.setString(1, s.getName());
 
 			int rowsDeleted = statement.executeUpdate();
@@ -166,10 +160,9 @@ public class DB {
 	// search by course methode..
 	public void searchByCourse(String course, DefaultTableModel tableModel) {
 
-		try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/guiproj", "root", "root")) {
-
+		try {
 			String sql = "select * from guirep where course=?;";
-			PreparedStatement statement = conn.prepareStatement(sql);
+			PreparedStatement statement = con.prepareStatement(sql);
 			statement.setString(1, course);
 
 			ResultSet rs = statement.executeQuery();
@@ -204,10 +197,9 @@ public class DB {
 
 		String userEmail = "";
 
-		try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/guiproj", "root", "root")) {
-
+		try {
 			String sql = "select * from guirep where name=?;";
-			PreparedStatement statement = conn.prepareStatement(sql);
+			PreparedStatement statement = con.prepareStatement(sql);
 			statement.setString(1, name);
 
 			ResultSet rs = statement.executeQuery();
@@ -242,10 +234,9 @@ public class DB {
 
 		String uniqueId = "";
 
-		try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/guiproj", "root", "root")) {
-
+		try {
 			String sql = "select * from guirep where email=?;";
-			PreparedStatement statement = conn.prepareStatement(sql);
+			PreparedStatement statement = con.prepareStatement(sql);
 			statement.setString(1, email);
 
 			ResultSet rs = statement.executeQuery();
@@ -280,8 +271,8 @@ public class DB {
 
 	public void loadData(DefaultTableModel tableModel) {
 
-		try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/guiproj", "root", "root");
-				Statement stmt = conn.createStatement()) {
+		try {
+			Statement stmt = con.createStatement();
 
 			ResultSet rs = stmt.executeQuery("select * from guirep;");
 			ResultSetMetaData metaData = rs.getMetaData();
@@ -312,10 +303,9 @@ public class DB {
 
 	public void searchByUnique(String unique, DefaultTableModel tableModel) {
 
-		try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/guiproj", "root", "root")) {
-
+		try {
 			String sql = "select * from guirep where uniqueNo=?;";
-			PreparedStatement statement = conn.prepareStatement(sql);
+			PreparedStatement statement = con.prepareStatement(sql);
 			statement.setString(1, unique);
 
 			ResultSet rs = statement.executeQuery();

@@ -1,6 +1,5 @@
 import java.util.concurrent.atomic.AtomicInteger;
 
-
 // to generate student No.. 
 public class UniqueIdGenerator {
 	static int id;

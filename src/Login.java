@@ -25,7 +25,6 @@ public class Login extends JFrame implements ActionListener {
 	private JFrame login;
 
 	public Login() {
-		
 		// to connect mysql..
 		db = new DB();
 		login = new JFrame("## Please Log In... ##");

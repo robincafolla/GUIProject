@@ -167,7 +167,6 @@ public class AdminDashboard extends JPanel {
 				// place for methode..
 				User s = new User();
 				setFieldsData(s);
-				DB db = new DB();
 				db.insertUser(s);
 
 				new SwingWorker<Void, Void>() {
@@ -190,8 +189,6 @@ public class AdminDashboard extends JPanel {
 				User s = new User();
 				setFieldsData(s);
 				s.setUniqueId(Integer.parseInt(uniqueNoField.getText()));
-
-				DB db = new DB();
 				db.updateUser(s);
 
 				new SwingWorker<Void, Void>() {
@@ -214,7 +211,6 @@ public class AdminDashboard extends JPanel {
 				// Methode for deleting..
 				User s = new User();
 				setFieldsData(s);
-				DB db = new DB();
 				db.deleteUser(s);
 
 				new SwingWorker<Void, Void>() {
@@ -235,9 +231,7 @@ public class AdminDashboard extends JPanel {
 		searchButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				DB db = new DB();
 				db.searchByCourse(courseField.getText(), tableModel);
-
 			}
 		});
 
@@ -247,7 +241,6 @@ public class AdminDashboard extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// searchByName
-				DB db = new DB();
 				frame.dispose();
 				new StudentDashboard(db.searchByName(nameField.getText()));
 			}
