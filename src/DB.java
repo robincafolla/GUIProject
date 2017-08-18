@@ -29,8 +29,7 @@ public class DB {
 
 	// methode checking for userId and password
 	public Boolean checkLogin(String user, String pswd) {
-		try {
-			pst = con.prepareStatement("select * from guirep where email=? and pass=?");
+		try (PreparedStatement pst = con.prepareStatement("select * from guirep where email=? and pass=?")) {
 			pst.setString(1, user);
 			pst.setString(2, pswd);
 
@@ -49,8 +48,7 @@ public class DB {
 	// distinguish type of user - admin and student. return user's Type Value.
 	public String checkType(String user) {
 		String tpVal = null;
-		try {
-			pst = con.prepareStatement("select type from guirep where email=?");
+		try (PreparedStatement pst = con.prepareStatement("select type from guirep where email=?")) {
 			pst.setString(1, user);
 			rs = pst.executeQuery();
 			if (rs.next()) {
@@ -64,8 +62,8 @@ public class DB {
 	}
 
 	public int findLastNoOfStudent() {
-		try {
-			PreparedStatement pst = con.prepareStatement("SELECT * FROM guirep ORDER BY id DESC LIMIT 1;");
+		try (PreparedStatement pst = con.prepareStatement("SELECT * FROM guirep ORDER BY id DESC LIMIT 1;")) {
+
 			ResultSet rs = pst.executeQuery();
 			ResultSetMetaData metaData = rs.getMetaData();
 
@@ -88,11 +86,8 @@ public class DB {
 	}
 
 	public void insertUser(User s) {
-
-		try {
-			String sql = "INSERT INTO guirep (name, email, pass, course, tel, type, uniqueNo) VALUES (?, ?, ?, ?, ?, ?, ?)";
-			PreparedStatement pst = con.prepareStatement(sql);
-
+		String sql = "INSERT INTO guirep (name, email, pass, course, tel, type, uniqueNo) VALUES (?, ?, ?, ?, ?, ?, ?)";
+		try (PreparedStatement pst = con.prepareStatement(sql);) {
 			pst.setString(1, s.getName());
 			pst.setString(2, s.getEmail());
 			pst.setString(3, s.getPass());
@@ -117,10 +112,8 @@ public class DB {
 	}
 
 	public void updateUser(User s) {
-		try {
-			String sql = "UPDATE guirep SET name=?, email=?, pass=?, course=?, tel=?, type=? WHERE uniqueNo=?";
-
-			PreparedStatement statement = con.prepareStatement(sql);
+		String sql = "UPDATE guirep SET name=?, email=?, pass=?, course=?, tel=?, type=? WHERE uniqueNo=?";
+		try (PreparedStatement statement = con.prepareStatement(sql)) {
 			statement.setString(1, s.getName());
 			statement.setString(2, s.getEmail());
 			statement.setString(3, s.getPass());
@@ -140,11 +133,8 @@ public class DB {
 
 	// delete with name - methode..
 	public void deleteUser(User s) {
-
-		try {
-			String sql = "DELETE FROM guirep WHERE name=?";
-
-			PreparedStatement statement = con.prepareStatement(sql);
+		String sql = "DELETE FROM guirep WHERE name=?";
+		try (PreparedStatement statement = con.prepareStatement(sql);) {
 			statement.setString(1, s.getName());
 
 			int rowsDeleted = statement.executeUpdate();
@@ -159,10 +149,8 @@ public class DB {
 
 	// search by course methode..
 	public void searchByCourse(String course, DefaultTableModel tableModel) {
-
-		try {
-			String sql = "select * from guirep where course=?;";
-			PreparedStatement statement = con.prepareStatement(sql);
+		String sql = "select * from guirep where course=?;";
+		try (PreparedStatement statement = con.prepareStatement(sql);) {
 			statement.setString(1, course);
 
 			ResultSet rs = statement.executeQuery();
@@ -194,12 +182,10 @@ public class DB {
 
 	// search by name methode..
 	public String searchByName(String name) {
-
 		String userEmail = "";
+		String sql = "select * from guirep where name=?;";
+		try (PreparedStatement statement = con.prepareStatement(sql)) {
 
-		try {
-			String sql = "select * from guirep where name=?;";
-			PreparedStatement statement = con.prepareStatement(sql);
 			statement.setString(1, name);
 
 			ResultSet rs = statement.executeQuery();
@@ -231,12 +217,10 @@ public class DB {
 	}
 
 	public String returnUniqueId(String email) {
-
 		String uniqueId = "";
+		String sql = "select * from guirep where email=?;";
 
-		try {
-			String sql = "select * from guirep where email=?;";
-			PreparedStatement statement = con.prepareStatement(sql);
+		try (PreparedStatement statement = con.prepareStatement(sql);) {
 			statement.setString(1, email);
 
 			ResultSet rs = statement.executeQuery();
@@ -271,8 +255,7 @@ public class DB {
 
 	public void loadData(DefaultTableModel tableModel) {
 
-		try {
-			Statement stmt = con.createStatement();
+		try (Statement stmt = con.createStatement()) {
 
 			ResultSet rs = stmt.executeQuery("select * from guirep;");
 			ResultSetMetaData metaData = rs.getMetaData();
@@ -302,10 +285,9 @@ public class DB {
 	}
 
 	public void searchByUnique(String unique, DefaultTableModel tableModel) {
+		String sql = "select * from guirep where uniqueNo=?;";
 
-		try {
-			String sql = "select * from guirep where uniqueNo=?;";
-			PreparedStatement statement = con.prepareStatement(sql);
+		try (PreparedStatement statement = con.prepareStatement(sql)) {
 			statement.setString(1, unique);
 
 			ResultSet rs = statement.executeQuery();
