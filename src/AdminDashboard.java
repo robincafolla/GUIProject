@@ -16,7 +16,6 @@ public class AdminDashboard extends JPanel {
 
 	JButton button = new JButton();
 	JTable table;
-	DB db = new DB();
 	User s = new User();
 
 	JPanel bottom = new JPanel(new BorderLayout());
@@ -39,6 +38,7 @@ public class AdminDashboard extends JPanel {
 	private JButton endButton = new JButton("LOGOUT");
 	private JButton exitButton = new JButton("EXIT");
 	private JLabel C;
+
 
 	public User setFieldsData(User s) {
 		s.setName(nameField.getText());
@@ -88,7 +88,7 @@ public class AdminDashboard extends JPanel {
 					@Override
 					protected Void doInBackground() throws Exception {
 						button.setEnabled(false);
-						db.loadData(tableModel);
+						DB.loadData(tableModel);
 						button.setEnabled(true);
 						return null;
 					}
@@ -168,12 +168,12 @@ public class AdminDashboard extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				// place for methode..
 				setFieldsData(s);
-				db.insertUser(s);
+				DB.insertUser(s);
 
 				new SwingWorker<Void, Void>() {
 					@Override
 					protected Void doInBackground() throws Exception {
-						db.loadData(tableModel);
+						DB.loadData(tableModel);
 						clearFields();
 						return null;
 					}
@@ -189,12 +189,12 @@ public class AdminDashboard extends JPanel {
 				// methodes...
 				setFieldsData(s);
 				s.setUniqueId(Integer.parseInt(uniqueNoField.getText()));
-				db.updateUser(s);
+				DB.updateUser(s);
 
 				new SwingWorker<Void, Void>() {
 					@Override
 					protected Void doInBackground() throws Exception {
-						db.loadData(tableModel);
+						DB.loadData(tableModel);
 						clearFields();
 						return null;
 					}
@@ -210,13 +210,13 @@ public class AdminDashboard extends JPanel {
 
 				// Methode for deleting..
 				setFieldsData(s);
-				db.deleteUser(s);
+				DB.deleteUser(s);
 
 				new SwingWorker<Void, Void>() {
 					@Override
 					protected Void doInBackground() throws Exception {
 						button.setEnabled(false);
-						db.loadData(tableModel);
+						DB.loadData(tableModel);
 						button.setEnabled(true);
 						clearFields();
 						return null;
@@ -230,7 +230,7 @@ public class AdminDashboard extends JPanel {
 		searchButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				db.searchByCourse(courseField.getText(), tableModel);
+				DB.searchByCourse(courseField.getText(), tableModel);
 			}
 		});
 
@@ -241,7 +241,7 @@ public class AdminDashboard extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				// searchByName
 				frame.dispose();
-				new StudentDashboard(db.searchByName(nameField.getText()));
+				new StudentDashboard(DB.searchByName(nameField.getText()));
 			}
 		});
 

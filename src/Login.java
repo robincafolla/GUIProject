@@ -22,12 +22,11 @@ public class Login extends JFrame implements ActionListener {
 	private JPasswordField psField;
 	private JTextField idField;
 	private JButton button;
-	private DB db;
 	private JFrame login;
 
+	
 	public Login() {
-		// to connect mysql..
-		db = new DB();
+
 		login = new JFrame("## Please Log In... ##");
 
 		JPanel p = new JPanel(new GridBagLayout());
@@ -106,18 +105,20 @@ public class Login extends JFrame implements ActionListener {
 			char[] temp_pwd = psField.getPassword();
 			String pwd = null;
 			pwd = String.copyValueOf(temp_pwd);
-			// System.out.println("Username,Pwd:" + idField.getText() + "," + pwd);
+			
+			// Making a connection with Server
+			new DB();
 
 			// The entered username and password are sent via "checkLogin()" which
 			// return boolean, then "checkType()"
-			if (db.checkLogin(idField.getText(), pwd)) {
-				if (db.checkType(idField.getText()).equals("A")) {
+			if (DB.checkLogin(idField.getText(), pwd)) {
+				if (DB.checkType(idField.getText()).equals("A")) {
 					JOptionPane.showMessageDialog(null, "## Welcome, You will be brought to Admin Dashboard ##", "Success",
 							JOptionPane.INFORMATION_MESSAGE);
 					login.dispose();
 					new AdminDashboard();
 
-				} else if (db.checkType(idField.getText()).equals("S")) {
+				} else if (DB.checkType(idField.getText()).equals("S")) {
 					JOptionPane.showMessageDialog(null, "## Hello, You will be brought to Student Dashboard ##", "Success",
 							JOptionPane.INFORMATION_MESSAGE);
 					login.dispose();

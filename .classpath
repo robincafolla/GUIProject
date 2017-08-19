@@ -4,5 +4,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="lib" path="/Users/rainbowtape/Downloads/mysql-connector-java-5.1.43 2/mysql-connector-java-5.1.43-bin.jar"/>
 	<classpathentry kind="lib" path="/Users/rainbowtape/Downloads/miglayout-3.7.jar"/>
+	<classpathentry kind="lib" path="/Users/rainbowtape/Downloads/c3p0-0.9.5.2.jar"/>
+	<classpathentry kind="lib" path="/Users/rainbowtape/Downloads/mchange-commons-java-0.2.12.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -1,35 +1,38 @@
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Vector;
-
 import javax.swing.table.DefaultTableModel;
 
+import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 public class DB {
 
-	Connection con;
-	PreparedStatement pst;
-	ResultSet rs;
+	private static ComboPooledDataSource comboPooledDataSource;
+	private static Connection con;
+	private static ResultSet rs;
+	private static int lastNoOfStudent;
 
-	private int lastNoOfStudent;
-
-	// connect to DB.
+	// Connect to DB. using Connection Pooling.
 	public DB() {
 		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/guiproj", "root", "root");
+			comboPooledDataSource = new ComboPooledDataSource();
+			comboPooledDataSource.setDriverClass("com.mysql.jdbc.Driver");
+			comboPooledDataSource.setJdbcUrl("jdbc:mysql://localhost:3306/guiproj");
+			comboPooledDataSource.setUser("root");
+			comboPooledDataSource.setPassword("root");
+			
+			con = comboPooledDataSource.getConnection();
 		} catch (Exception e) {
 			System.out.println(e);
 		}
 	}
-
+	
 	// methode checking for userId and password
-	public Boolean checkLogin(String user, String pswd) {
+	public static Boolean checkLogin(String user, String pswd) {
 		try (PreparedStatement pst = con.prepareStatement("select * from guirep where email=? and pass=?")) {
 			pst.setString(1, user);
 			pst.setString(2, pswd);
@@ -47,7 +50,7 @@ public class DB {
 	}
 
 	// distinguish type of user - admin and student. return user's Type Value.
-	public String checkType(String user) {
+	public static String checkType(String user) {
 		String tpVal = null;
 		try (PreparedStatement pst = con.prepareStatement("select type from guirep where email=?")) {
 			pst.setString(1, user);
@@ -62,7 +65,7 @@ public class DB {
 		return tpVal;
 	}
 
-	public int findLastNoOfStudent() {
+	public static int findLastNoOfStudent() {
 		try (PreparedStatement pst = con.prepareStatement("SELECT * FROM guirep ORDER BY id DESC LIMIT 1;")) {
 
 			ResultSet rs = pst.executeQuery();
@@ -86,7 +89,7 @@ public class DB {
 		return lastNoOfStudent;
 	}
 
-	public void insertUser(User s) {
+	public static void insertUser(User s) {
 		String sql = "INSERT INTO guirep (name, email, pass, course, tel, type, uniqueNo) VALUES (?, ?, ?, ?, ?, ?, ?)";
 		try (PreparedStatement pst = con.prepareStatement(sql)) {
 			pst.setString(1, s.getName());
@@ -112,7 +115,7 @@ public class DB {
 		}
 	}
 
-	public void updateUser(User s) {
+	public static void updateUser(User s) {
 		String sql = "UPDATE guirep SET name=?, email=?, pass=?, course=?, tel=?, type=? WHERE uniqueNo=?";
 		try (PreparedStatement statement = con.prepareStatement(sql)) {
 			statement.setString(1, s.getName());
@@ -133,7 +136,7 @@ public class DB {
 	}
 
 	// delete with name - methode..
-	public void deleteUser(User s) {
+	public static void deleteUser(User s) {
 		String sql = "DELETE FROM guirep WHERE name=?";
 		try (PreparedStatement statement = con.prepareStatement(sql)) {
 			statement.setString(1, s.getName());
@@ -149,7 +152,7 @@ public class DB {
 	}
 
 	// search by course methode..
-	public void searchByCourse(String course, DefaultTableModel tableModel) {
+	public static void searchByCourse(String course, DefaultTableModel tableModel) {
 		String sql = "select * from guirep where course=?;";
 		try (PreparedStatement statement = con.prepareStatement(sql)) {
 			statement.setString(1, course);
@@ -182,7 +185,7 @@ public class DB {
 	}
 
 	// search by name methode..
-	public String searchByName(String name) {
+	public static String searchByName(String name) {
 		String userEmail = "";
 		String sql = "select * from guirep where name=?;";
 		try (PreparedStatement statement = con.prepareStatement(sql)) {
@@ -217,7 +220,7 @@ public class DB {
 		return userEmail;
 	}
 
-	public String returnUniqueId(String email) {
+	public static String returnUniqueId(String email) {
 		String uniqueId = "";
 		String sql = "select * from guirep where email=?;";
 
@@ -254,7 +257,7 @@ public class DB {
 
 	}
 
-	public void loadData(DefaultTableModel tableModel) {
+	public static void loadData(DefaultTableModel tableModel) {
 
 		try (Statement stmt = con.createStatement()) {
 
@@ -285,7 +288,7 @@ public class DB {
 		}
 	}
 
-	public void searchByUnique(String unique, DefaultTableModel tableModel) {
+	public static void searchByUnique(String unique, DefaultTableModel tableModel) {
 		String sql = "select * from guirep where uniqueNo=?;";
 
 		try (PreparedStatement statement = con.prepareStatement(sql)) {

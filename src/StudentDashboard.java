@@ -16,7 +16,6 @@ public class StudentDashboard extends JFrame {
 
 	private JButton button;
 	private JTable table;
-	DB db = new DB();
 	
 	private final DefaultTableModel tableModel = new DefaultTableModel();
 	JPanel bottom = new JPanel(new BorderLayout());
@@ -53,7 +52,7 @@ public class StudentDashboard extends JFrame {
 
 	public StudentDashboard(String email) {
 		// to get uniqueStudentNumber from Database....
-		unique = db.returnUniqueId(email);
+		unique = DB.returnUniqueId(email);
 
 		// Main GUI section...
 		frame = new JFrame("** Student **");
@@ -75,7 +74,7 @@ public class StudentDashboard extends JFrame {
 		new SwingWorker<Void, Void>() {
 			@Override
 			protected Void doInBackground() throws Exception {
-				db.searchByUnique(unique, tableModel);
+				DB.searchByUnique(unique, tableModel);
 				return null;
 			}
 		}.execute();
@@ -149,12 +148,12 @@ public class StudentDashboard extends JFrame {
 				setFieldsData(s);
 				s.setUniqueId(Integer.parseInt(uniqueNoField.getText()));
 
-				db.updateUser(s);
+				DB.updateUser(s);
 
 				new SwingWorker<Void, Void>() {
 					@Override
 					protected Void doInBackground() throws Exception {
-						db.loadData(tableModel);
+						DB.loadData(tableModel);
 						clearFields();
 						return null;
 					}
