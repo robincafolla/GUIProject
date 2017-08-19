@@ -16,6 +16,7 @@ public class StudentDashboard extends JFrame {
 	private JButton button;
 	private JTable table;
 	DB db = new DB();
+	
 	private final DefaultTableModel tableModel = new DefaultTableModel();
 	JPanel bottom = new JPanel(new BorderLayout());
 

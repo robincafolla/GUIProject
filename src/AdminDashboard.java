@@ -16,6 +16,7 @@ public class AdminDashboard extends JPanel {
 	JButton button = new JButton();
 	JTable table;
 	DB db = new DB();
+	User s = new User();
 
 	JPanel bottom = new JPanel(new BorderLayout());
 
@@ -165,7 +166,6 @@ public class AdminDashboard extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// place for methode..
-				User s = new User();
 				setFieldsData(s);
 				db.insertUser(s);
 
@@ -186,7 +186,6 @@ public class AdminDashboard extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// methodes...
-				User s = new User();
 				setFieldsData(s);
 				s.setUniqueId(Integer.parseInt(uniqueNoField.getText()));
 				db.updateUser(s);
@@ -209,7 +208,6 @@ public class AdminDashboard extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 
 				// Methode for deleting..
-				User s = new User();
 				setFieldsData(s);
 				db.deleteUser(s);
 
