@@ -11,6 +11,7 @@ import javax.swing.table.DefaultTableModel;
 
 import net.miginfocom.swing.MigLayout;
 
+
 public class StudentDashboard extends JFrame {
 
 	private JButton button;

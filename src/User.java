@@ -1,5 +1,6 @@
 public class User {
 
+	
 	private int uniqueId;
 	private String name;
 	private String email;
