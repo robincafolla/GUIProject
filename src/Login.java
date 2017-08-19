@@ -18,6 +18,8 @@ import javax.swing.SwingUtilities;
 
 public class Login extends JFrame implements ActionListener {
 
+	
+	
 	private JPasswordField psField;
 	private JTextField idField;
 	private JButton button;
@@ -36,7 +38,7 @@ public class Login extends JFrame implements ActionListener {
 		p.setFont(new Font("Consolas", Font.PLAIN, 12));
 
 		GridBagConstraints c = new GridBagConstraints(); // Create GridLayout in
-
+		
 		// components..
 		JLabel userId, pass;
 		userId = new JLabel("USER ID - it's your email.", SwingConstants.CENTER);
