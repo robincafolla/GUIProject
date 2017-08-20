@@ -12,11 +12,15 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
 public class DB {
 
 	private static ComboPooledDataSource comboPooledDataSource;
-	private static Connection con;
 	private static ResultSet rs;
 	private static int lastNoOfStudent;
 
-	// Connect to DB. using Connection Pooling.
+	/*
+	 * 
+	 * Connect to DB. using Connection Pooling. 
+	 * Would be there benefit when I use Connection Pooling over normal JDBC ??? 
+	 *
+	 */	
 	public DB() {
 		try {
 			comboPooledDataSource = new ComboPooledDataSource();
@@ -25,15 +29,28 @@ public class DB {
 			comboPooledDataSource.setUser("root");
 			comboPooledDataSource.setPassword("root");
 			
-			con = comboPooledDataSource.getConnection();
 		} catch (Exception e) {
 			System.out.println(e);
-		}
+		} 
 	}
+	
+	
+
+	/*
+	 * 
+	 * As you can see, every methods use Connection to DB in 'try with resourse' block.(no need to close()) 
+	 * Is this best way of doing it? 
+	 * What if I can re-use connection object for several methods. can it be done? 
+	 * if so, how do you close the connection? 
+	 * 
+	 */
+	
+	
 	
 	// methode checking for userId and password
 	public static Boolean checkLogin(String user, String pswd) {
-		try (PreparedStatement pst = con.prepareStatement("select * from guirep where email=? and pass=?")) {
+		try (Connection con = comboPooledDataSource.getConnection(); 
+				PreparedStatement pst = con.prepareStatement("select * from guirep where email=? and pass=?")) {
 			pst.setString(1, user);
 			pst.setString(2, pswd);
 
@@ -46,13 +63,20 @@ public class DB {
 		} catch (Exception e) {
 			System.out.println("error while validating" + e);
 			return false;
+		} finally {
+			try {
+				rs.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
 	// distinguish type of user - admin and student. return user's Type Value.
 	public static String checkType(String user) {
 		String tpVal = null;
-		try (PreparedStatement pst = con.prepareStatement("select type from guirep where email=?")) {
+		try (Connection con = comboPooledDataSource.getConnection(); 
+				PreparedStatement pst = con.prepareStatement("select type from guirep where email=?")) {
 			pst.setString(1, user);
 			rs = pst.executeQuery();
 			if (rs.next()) {
@@ -61,12 +85,19 @@ public class DB {
 			}
 		} catch (Exception e) {
 			System.out.println("error while validating" + e);
+		} finally {
+			try {
+				rs.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 		return tpVal;
 	}
 
 	public static int findLastNoOfStudent() {
-		try (PreparedStatement pst = con.prepareStatement("SELECT * FROM guirep ORDER BY id DESC LIMIT 1;")) {
+		try (Connection con = comboPooledDataSource.getConnection();
+				PreparedStatement pst = con.prepareStatement("SELECT * FROM guirep ORDER BY id DESC LIMIT 1;")) {
 
 			ResultSet rs = pst.executeQuery();
 			ResultSetMetaData metaData = rs.getMetaData();
@@ -85,13 +116,20 @@ public class DB {
 
 		} catch (Exception e) {
 			System.out.println(e);
+		} finally {
+			try {
+				rs.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 		return lastNoOfStudent;
 	}
 
 	public static void insertUser(User s) {
 		String sql = "INSERT INTO guirep (name, email, pass, course, tel, type, uniqueNo) VALUES (?, ?, ?, ?, ?, ?, ?)";
-		try (PreparedStatement pst = con.prepareStatement(sql)) {
+		try (Connection con = comboPooledDataSource.getConnection();
+				PreparedStatement pst = con.prepareStatement(sql)) {
 			pst.setString(1, s.getName());
 			pst.setString(2, s.getEmail());
 			pst.setString(3, s.getPass());
@@ -112,12 +150,13 @@ public class DB {
 
 		} catch (SQLException ex) {
 			ex.printStackTrace();
-		}
+		} 
 	}
 
 	public static void updateUser(User s) {
 		String sql = "UPDATE guirep SET name=?, email=?, pass=?, course=?, tel=?, type=? WHERE uniqueNo=?";
-		try (PreparedStatement statement = con.prepareStatement(sql)) {
+		try (Connection con = comboPooledDataSource.getConnection();
+				PreparedStatement statement = con.prepareStatement(sql)) {
 			statement.setString(1, s.getName());
 			statement.setString(2, s.getEmail());
 			statement.setString(3, s.getPass());
@@ -138,7 +177,8 @@ public class DB {
 	// delete with name - methode..
 	public static void deleteUser(User s) {
 		String sql = "DELETE FROM guirep WHERE name=?";
-		try (PreparedStatement statement = con.prepareStatement(sql)) {
+		try (Connection con = comboPooledDataSource.getConnection();
+				PreparedStatement statement = con.prepareStatement(sql)) {
 			statement.setString(1, s.getName());
 
 			int rowsDeleted = statement.executeUpdate();
@@ -154,10 +194,11 @@ public class DB {
 	// search by course methode..
 	public static void searchByCourse(String course, DefaultTableModel tableModel) {
 		String sql = "select * from guirep where course=?;";
-		try (PreparedStatement statement = con.prepareStatement(sql)) {
+		try (Connection con = comboPooledDataSource.getConnection();
+				PreparedStatement statement = con.prepareStatement(sql)) {
 			statement.setString(1, course);
 
-			ResultSet rs = statement.executeQuery();
+			rs = statement.executeQuery();
 			ResultSetMetaData metaData = rs.getMetaData();
 
 			// Names of columns
@@ -181,6 +222,12 @@ public class DB {
 
 		} catch (Exception e) {
 			System.out.println(e);
+		} finally {
+			try {
+				rs.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -188,11 +235,12 @@ public class DB {
 	public static String searchByName(String name) {
 		String userEmail = "";
 		String sql = "select * from guirep where name=?;";
-		try (PreparedStatement statement = con.prepareStatement(sql)) {
+		try (Connection con = comboPooledDataSource.getConnection();
+				PreparedStatement statement = con.prepareStatement(sql)) {
 
 			statement.setString(1, name);
 
-			ResultSet rs = statement.executeQuery();
+			rs = statement.executeQuery();
 			ResultSetMetaData metaData = rs.getMetaData();
 
 			// Names of columns
@@ -216,6 +264,12 @@ public class DB {
 		} catch (Exception e) {
 			System.out.println(e);
 			// LOG.log(Level.SEVERE, "Exception in Load Data", e);
+		} finally {
+			try {
+				rs.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 		return userEmail;
 	}
@@ -224,10 +278,11 @@ public class DB {
 		String uniqueId = "";
 		String sql = "select * from guirep where email=?;";
 
-		try (PreparedStatement statement = con.prepareStatement(sql)) {
+		try (Connection con = comboPooledDataSource.getConnection();
+				PreparedStatement statement = con.prepareStatement(sql)) {
 			statement.setString(1, email);
 
-			ResultSet rs = statement.executeQuery();
+			rs = statement.executeQuery();
 			ResultSetMetaData metaData = rs.getMetaData();
 
 			// Names of columns
@@ -251,6 +306,12 @@ public class DB {
 		} catch (Exception e) {
 			System.out.println(e);
 			// LOG.log(Level.SEVERE, "Exception in Load Data", e);
+		} finally {
+			try {
+				rs.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 
 		return uniqueId;
@@ -259,9 +320,10 @@ public class DB {
 
 	public static void loadData(DefaultTableModel tableModel) {
 
-		try (Statement stmt = con.createStatement()) {
+		try (Connection con = comboPooledDataSource.getConnection();
+				Statement stmt = con.createStatement()) {
 
-			ResultSet rs = stmt.executeQuery("select * from guirep;");
+			rs = stmt.executeQuery("select * from guirep;");
 			ResultSetMetaData metaData = rs.getMetaData();
 
 			// Names of columns
@@ -285,16 +347,23 @@ public class DB {
 
 		} catch (Exception e) {
 			System.out.println(e);
+		} finally {
+			try {
+				rs.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
 	public static void searchByUnique(String unique, DefaultTableModel tableModel) {
 		String sql = "select * from guirep where uniqueNo=?;";
 
-		try (PreparedStatement statement = con.prepareStatement(sql)) {
+		try (Connection con = comboPooledDataSource.getConnection();
+				PreparedStatement statement = con.prepareStatement(sql)) {
 			statement.setString(1, unique);
 
-			ResultSet rs = statement.executeQuery();
+			rs = statement.executeQuery();
 			ResultSetMetaData metaData = rs.getMetaData();
 
 			// Names of columns
@@ -318,6 +387,12 @@ public class DB {
 
 		} catch (Exception e) {
 			System.out.println(e);
+		} finally {
+			try {
+				rs.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
