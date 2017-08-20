@@ -15,12 +15,15 @@ public class DB {
 	private static ResultSet rs;
 	private static int lastNoOfStudent;
 
+	
 	/*
 	 * 
 	 * Connect to DB. using Connection Pooling. 
 	 * Would be there benefit when I use Connection Pooling over normal JDBC ??? 
 	 *
 	 */	
+	
+	
 	public DB() {
 		try {
 			comboPooledDataSource = new ComboPooledDataSource();
@@ -47,7 +50,7 @@ public class DB {
 	
 	
 	
-	// methode checking for userId and password
+	// Methode checking for userId and password
 	public static Boolean checkLogin(String user, String pswd) {
 		try (Connection con = comboPooledDataSource.getConnection(); 
 				PreparedStatement pst = con.prepareStatement("select * from guirep where email=? and pass=?")) {
