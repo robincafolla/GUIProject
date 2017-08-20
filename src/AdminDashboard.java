@@ -13,7 +13,6 @@ public class AdminDashboard extends JPanel {
 
 	private final DefaultTableModel tableModel = new DefaultTableModel(); // Don't know why it has to be Final??? 
 	public static boolean RIGHT_TO_LEFT = false;
-
 	JButton button = new JButton();
 	JTable table;
 	User s = new User();
@@ -99,6 +98,8 @@ public class AdminDashboard extends JPanel {
 
 		// main Jtable - center field for showing result.
 		table = new JTable(tableModel) {
+			private static final long serialVersionUID = 1L;
+
 			public boolean isCellEditable(int row, int column) {
 				return false;
 			}

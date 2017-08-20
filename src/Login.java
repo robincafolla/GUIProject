@@ -24,7 +24,6 @@ public class Login extends JFrame implements ActionListener {
 	private JButton button;
 	private JFrame login;
 
-	
 	public Login() {
 
 		login = new JFrame("## Please Log In... ##");

@@ -11,11 +11,10 @@ import javax.swing.table.DefaultTableModel;
 
 import net.miginfocom.swing.MigLayout;
 
-
 public class StudentDashboard extends JFrame {
 
-	private JButton button;
 	private JTable table;
+	protected User s;
 	
 	private final DefaultTableModel tableModel = new DefaultTableModel();
 	JPanel bottom = new JPanel(new BorderLayout());
@@ -37,6 +36,7 @@ public class StudentDashboard extends JFrame {
 	private String unique;
 	private Component C;
 
+	
 	public User setFieldsData(User s) {
 		s.setName(nameField.getText());
 		s.setEmail(emailField.getText());
@@ -144,7 +144,7 @@ public class StudentDashboard extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// methodes...
-				User s = new User();
+				s = new User();
 				setFieldsData(s);
 				s.setUniqueId(Integer.parseInt(uniqueNoField.getText()));
 
@@ -153,7 +153,7 @@ public class StudentDashboard extends JFrame {
 				new SwingWorker<Void, Void>() {
 					@Override
 					protected Void doInBackground() throws Exception {
-						DB.loadData(tableModel);
+						DB.searchByUnique(unique, tableModel);
 						clearFields();
 						return null;
 					}

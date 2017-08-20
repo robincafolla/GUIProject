@@ -19,7 +19,7 @@ public class DB {
 	/*
 	 * 
 	 * Connect to DB. using Connection Pooling. 
-	 * Would be there benefit when I use Connection Pooling over normal JDBC ??? 
+	 * Would there be benefit when I use Connection Pooling over normal JDBC ??? 
 	 *
 	 */	
 	
@@ -42,7 +42,7 @@ public class DB {
 	/*
 	 * 
 	 * As you can see, every methods use Connection to DB in 'try with resourse' block.(no need to close()) 
-	 * Is this best way of doing it? 
+	 *  
 	 * What if I can re-use connection object for several methods. can it be done? 
 	 * if so, how do you close the connection? 
 	 * 

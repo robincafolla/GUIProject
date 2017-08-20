@@ -3,9 +3,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 // to generate student No.. 
 public class UniqueIdGenerator {
 	static int id;
-	private static int lastNumberOfStudent;
+	private static int lastStudentNumber;
 	
-	AtomicInteger atomicInteger = new AtomicInteger(lastNumberOfStudent);
+	AtomicInteger atomicInteger = new AtomicInteger(lastStudentNumber);
 	public UniqueIdGenerator() {
 		id = atomicInteger.incrementAndGet();
 	}
@@ -21,10 +21,10 @@ public class UniqueIdGenerator {
 	}
 
 	public static int getLastNumberOfStudent() {
-		return lastNumberOfStudent;
+		return lastStudentNumber;
 	}
 
 	public static void setLastNumberOfStudent(int lastNumberOfStudent) {
-		UniqueIdGenerator.lastNumberOfStudent = lastNumberOfStudent;
+		UniqueIdGenerator.lastStudentNumber = lastNumberOfStudent;
 	}
 }
