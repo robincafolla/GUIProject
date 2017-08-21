@@ -46,6 +46,11 @@ public class DB {
 	 * What if I make Connection object, and re-use it for several methods. can it be possible? 
 	 * if so, how do I close the connection? 
 	 * 
+	 * I tried to make every methodes as Static as much as I can, 
+	 * It's becuase, When it's called from Dashboard, They don't need to create a object which takes resourse. 
+	 * so It's better way of doing it. 
+	 * Am I right?
+	 * 
 	 */
 	
 	
