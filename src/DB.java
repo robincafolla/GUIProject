@@ -43,8 +43,8 @@ public class DB {
 	 * 
 	 * As you can see, every methods use Connection to DB in 'try with resourse' block.(no need to close()) 
 	 *  
-	 * What if I can re-use connection object for several methods. can it be done? 
-	 * if so, how do you close the connection? 
+	 * What if I make Connection object, and re-use it for several methods. can it be possible? 
+	 * if so, how do I close the connection? 
 	 * 
 	 */
 	
