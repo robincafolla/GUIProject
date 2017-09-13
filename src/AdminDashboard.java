@@ -11,7 +11,10 @@ import java.awt.event.WindowEvent;
 
 public class AdminDashboard extends JPanel {
 
-	private final DefaultTableModel tableModel = new DefaultTableModel(); // Don't know why it has to be Final??? 
+	// final properties can't be over-riden once set. So later in your code you can't do:
+	//   this.tableModel = new DefaultTableModel();
+	// I don't know swing well enough to know if it's necessary for it to be final
+	private final DefaultTableModel tableModel = new DefaultTableModel(); // Don't know why it has to be Final???
 	public static boolean RIGHT_TO_LEFT = false;
 	JButton button = new JButton();
 	JTable table;

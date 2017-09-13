@@ -22,7 +22,9 @@ public class DB {
 	 * Would there be benefit when I use Connection Pooling over normal JDBC ??? 
 	 *
 	 */	
-	
+
+	// Yes. Establishing connections is pretty expensive (in cpu and ram terms). By pooling your connections your queries
+	// don't incur the same connection costs each time. You connect once and send all your queries over the same connection.
 	
 	public DB() {
 		try {
@@ -52,12 +54,26 @@ public class DB {
 	 * Am I right?
 	 * 
 	 */
-	
+	// It looks like comboPooledDataSource is already re-using the connection for several methods - i'd guess (without
+	// knowing much about it) that it's a singleton you get via getConnection.
+	//
+	// Again, without knowing it in detail, I guess that any con could be used to close the connection.
+	//
+	// I'd avoid using purely static methods for your Db class. A better practice is to inject your dependencies (the comboPooledDataSource for example) into
+	// the constructor - you can always use the same comboPooledDataSource each time you create a Db object. This makes your code
+	// much more testable and flexible.
+	//
+	// While there is overhead for creating the object, it's creating multiple connections you really want to avoid. The
+	// object creation overhead will be negligible.
+	//
+	// Where each of your methods below is using comboPooledDataSource.getConnection(), you could store that `con` as a
+	// private final property and refer to it with `this.con`.
+	:w
 	
 	
 	// Methode checking for userId and password
 	public static Boolean checkLogin(String user, String pswd) {
-		try (Connection con = comboPooledDataSource.getConnection(); 
+		try (Connection con = comboPooledDataSource.getConnection();
 				PreparedStatement pst = con.prepareStatement("select * from guirep where email=? and pass=?")) {
 			pst.setString(1, user);
 			pst.setString(2, pswd);
